@@ -1,10 +1,15 @@
 // Importaciones de rutas
+import authRoutes from './routes/Auth.js';
 
 // Importaciones de dependencias 
 import express from 'express';
 import cors from 'cors';
 import logger from './middlewares/logger.js';
 import loadEnv from './utils/loadEnv.js';
+
+// - Arreglar -
+import loadStaticFiles from './utils/loadStaticsFiles.js';
+
 import cookieParser from 'cookie-parser';
 
 // Middlewares
@@ -32,7 +37,7 @@ if (!isProduction) {
 }
 
 // Rutas
-// app.use('/api/user', authRoutes);
+app.use('/api/user', authRoutes);
 
 // Testeo de api
 app.get('/api/ping', async (req, res) => {

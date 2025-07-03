@@ -12,7 +12,7 @@ class AuthService {
   async login(email, password) {
     try {
       const [result] = await this.conex.execute(
-        "SELECT l.*, u.* FROM login l INNER JOIN users u ON l.id_user = u.id_user WHERE l.email = ?",
+        "SELECT * FROM login WHERE email = ?",
         [email]
       );
 
@@ -63,44 +63,24 @@ class AuthService {
     }
   }
 
-  async register({ email, pass, name, dni, phone }) {
-    let userId = null;
-
+  async register({ email, pass, name, }) {
     try {
-      const [userRes] = await this.conex.execute(
-        'INSERT INTO users(name, dni, phone) VALUES (?, ?, ?)',
-        [name, dni, phone]
-      );
-
-      userId = userRes.insertId;
-
       const hashed = await bcrypt.hash(pass, SALT_ROUNDS);
 
       const [loginRes] = await this.conex.execute(
-        'INSERT INTO login(id_user, email, pass) VALUES (?, ?, ?)',
-        [userId, email, hashed]
+        'INSERT INTO login(name email, pass) VALUES (?, ?, ?)',
+        [name, email, hashed]
       );
-
-      if (loginRes.affectedRows === 0) {
-        await this.conex.execute('DELETE FROM users WHERE id_user = ?', [userId]);
-        throw { status: 500, message: 'Error interno del servidor' };
-      }
 
       return {
         id_login: loginRes.insertId,
-        id_user: userId,
         email,
         name,
-        dni,
-        phone,
+        is_admin: false, 
       };
     } catch (err) {
-      // Limpiar usuario creado si hay error
-      if (userId)  await this.conex.execute('DELETE FROM users WHERE id_user = ?', [userId]);
-      
       if (err.status) throw err;
-
-      if (err.code === 'ER_DUP_ENTRY') throw { status: 409, message: 'El Email/DNI/Telefono ya se encuentra registrado' };
+      if (err.code === 'ER_DUP_ENTRY') throw { status: 409, message: 'El Email ya se encuentra registrado' };
 
       // Error interno no manejado
       console.error('Error interno en register:', err);

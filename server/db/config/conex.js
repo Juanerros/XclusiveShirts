@@ -1,5 +1,5 @@
 import mysql from 'mysql2/promise';
-import loadEnv from './../utils/loadEnv.js';
+import loadEnv from '../../utils/loadEnv.js';
 
 loadEnv();
 

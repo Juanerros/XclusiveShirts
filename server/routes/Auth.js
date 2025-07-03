@@ -1,7 +1,7 @@
 import express from 'express';
 import AuthService from '../services/AuthService.js';
-import AuthController from '../controller/AuthController.js';
-import createConnection from '../config/conex.js';
+import AuthController from '../controllers/AuthController.js'
+import createConnection from '../db/config/conex.js';
 import requireAuth from '../middlewares/authMiddleware.js';
 
 const router = express.Router();

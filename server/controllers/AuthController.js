@@ -13,10 +13,10 @@ class AuthController {
       const user = await this.authService.login(email, password);
 
       const token = generateToken({
-        id_user: user.id_user,
+        id_login: user.id_login,
         name: user.name,
         email: user.email,
-        isAdmin: user.isAdmin,
+        is_admin: user.is_admin,
       });
 
       res.cookie('token', token, {
@@ -43,11 +43,11 @@ class AuthController {
 
   register = async (req, res) => {
     try {
-      const { email, pass, name, dni } = req.body;
+      const { email, pass, name } = req.body;
       
       // Validar datos de entrada
-      if (!email || !pass || !name || !dni) {
-        return handleError(res, { status: 400, message: 'Email, contraseña, nombre y DNI son requeridos' });
+      if (!email || !pass || !name) {
+        return handleError(res, { status: 400, message: 'Email, contraseña y nombre son requeridos' });
       }
 
       const user = await this.authService.register(req.body);

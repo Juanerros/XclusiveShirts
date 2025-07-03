@@ -10,6 +10,8 @@ class AuthController {
     const { email, password } = req.body;
 
     try {
+      if (!email || !password) throw { status: 400, message: 'Email y contraseña son requeridos' };
+
       const user = await this.authService.login(email, password);
 
       const token = generateToken({

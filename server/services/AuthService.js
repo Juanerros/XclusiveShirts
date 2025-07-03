@@ -27,6 +27,8 @@ class AuthService {
         throw { status: 403, message: `Muchos intentos fallidos. Intente de nuevo ${time}` };
       }
 
+      console.log('Contras: ', user.pass, password);
+      
       const validPassword = await bcrypt.compare(password, user.pass);
       if (!validPassword) {
         try {
@@ -68,15 +70,15 @@ class AuthService {
       const hashed = await bcrypt.hash(pass, SALT_ROUNDS);
 
       const [loginRes] = await this.conex.execute(
-        'INSERT INTO login(name email, pass) VALUES (?, ?, ?)',
-        [name, email, hashed]
+        'INSERT INTO login(email, pass, name) VALUES (?, ?, ?)',
+        [email, hashed, name]
       );
 
       return {
         id_login: loginRes.insertId,
         email,
         name,
-        is_admin: false, 
+        is_admin: false,
       };
     } catch (err) {
       if (err.status) throw err;

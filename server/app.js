@@ -37,7 +37,7 @@ if (!isProduction) {
 }
 
 // Rutas
-app.use('/api/user', authRoutes);
+app.use('/api/auth', authRoutes);
 
 // Testeo de api
 app.get('/api/ping', async (req, res) => {

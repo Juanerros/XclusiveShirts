@@ -2,8 +2,8 @@ import handleError from '../utils/handleError.js';
 import { generateToken } from '../utils/jwt.js';
 
 class AuthController {
-  constructor(authService) {
-    this.authService = authService;
+  constructor(service) {
+    this.service = service;
   }
 
   login = async (req, res) => {
@@ -12,7 +12,7 @@ class AuthController {
     try {
       if (!email || !password) throw { status: 400, message: 'Email y contraseña son requeridos' };
 
-      const user = await this.authService.login(email, password);
+      const user = await this.service.login(email, password);
 
       const token = generateToken({
         id_login: user.id_login,
@@ -52,7 +52,7 @@ class AuthController {
         return handleError(res, { status: 400, message: 'Email, contraseña y nombre son requeridos' });
       }
 
-      const user = await this.authService.register(req.body);
+      const user = await this.service.register(req.body);
       res.status(201).json({
         message: 'Usuario registrado correctamente',
         user: { ...user, pass: '[Hidden]' }

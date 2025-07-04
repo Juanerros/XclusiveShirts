@@ -26,8 +26,6 @@ class AuthService {
         const time = moment(user.lock_until).fromNow();
         throw { status: 403, message: `Muchos intentos fallidos. Intente de nuevo ${time}` };
       }
-
-      console.log('Contras: ', user.pass, password);
       
       const validPassword = await bcrypt.compare(password, user.pass);
       if (!validPassword) {

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 03, 2025 at 11:26 PM
+-- Generation Time: Jul 05, 2025 at 12:31 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -29,20 +29,17 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `colors` (
   `id_color` int(11) NOT NULL,
-  `name` varchar(10) NOT NULL,
-  `stock` int(11) DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `images`
---
-
-CREATE TABLE `images` (
-  `id_image` int(11) NOT NULL,
   `name` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `colors`
+--
+
+INSERT INTO `colors` (`id_color`, `name`) VALUES
+(1, 'blanco'),
+(2, 'negro'),
+(3, 'verde');
 
 -- --------------------------------------------------------
 
@@ -60,6 +57,13 @@ CREATE TABLE `login` (
   `is_admin` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `login`
+--
+
+INSERT INTO `login` (`id_login`, `email`, `pass`, `name`, `failed_attempts`, `lock_until`, `is_admin`) VALUES
+(1, 'juancottier0@gmail.com', '$2b$15$W8ESUTGlk7b4lS0iR.w6E.rBdBmLC/6SWqG3.FEnIhRv81N5piiGe', 'Juan', 0, NULL, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -74,17 +78,13 @@ CREATE TABLE `products` (
   `description` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
 --
--- Table structure for table `products_colors`
+-- Dumping data for table `products`
 --
 
-CREATE TABLE `products_colors` (
-  `id_pc` int(11) NOT NULL,
-  `id_product` int(11) DEFAULT NULL,
-  `id_color` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `products` (`id_product`, `name`, `category`, `price`, `description`) VALUES
+(1, 'remera php', 'remera', 20000.00, 'Hyper remera de php epiquisima '),
+(5, 'Pantalon oversize', 'pantalon', 15000.00, 'Es un pantalon muy grand');
 
 -- --------------------------------------------------------
 
@@ -93,21 +93,9 @@ CREATE TABLE `products_colors` (
 --
 
 CREATE TABLE `products_images` (
-  `id_pi` int(11) NOT NULL,
+  `id_img` int(11) NOT NULL,
   `id_product` int(11) DEFAULT NULL,
-  `id_image` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `products_sizes`
---
-
-CREATE TABLE `products_sizes` (
-  `id_ps` int(11) NOT NULL,
-  `id_product` int(11) DEFAULT NULL,
-  `id_size` int(11) DEFAULT NULL
+  `archive` varchar(255) DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -118,9 +106,17 @@ CREATE TABLE `products_sizes` (
 
 CREATE TABLE `sizes` (
   `id_size` int(11) NOT NULL,
-  `name` varchar(10) NOT NULL,
-  `stock` int(11) DEFAULT 0
+  `name` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `sizes`
+--
+
+INSERT INTO `sizes` (`id_size`, `name`) VALUES
+(3, 'L'),
+(2, 'M'),
+(1, 'S');
 
 -- --------------------------------------------------------
 
@@ -137,6 +133,18 @@ CREATE TABLE `stocks` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- Dumping data for table `stocks`
+--
+
+INSERT INTO `stocks` (`id_stock`, `id_product`, `id_size`, `id_color`, `stock`) VALUES
+(1, 1, 3, 1, 10),
+(2, 1, 1, 1, 2),
+(3, 1, 3, 2, 0),
+(4, 5, 1, 1, 10),
+(5, 5, 2, 1, 10),
+(6, 5, 3, 2, 20);
+
+--
 -- Indexes for dumped tables
 --
 
@@ -144,13 +152,8 @@ CREATE TABLE `stocks` (
 -- Indexes for table `colors`
 --
 ALTER TABLE `colors`
-  ADD PRIMARY KEY (`id_color`);
-
---
--- Indexes for table `images`
---
-ALTER TABLE `images`
-  ADD PRIMARY KEY (`id_image`);
+  ADD PRIMARY KEY (`id_color`),
+  ADD UNIQUE KEY `name` (`name`);
 
 --
 -- Indexes for table `login`
@@ -166,34 +169,18 @@ ALTER TABLE `products`
   ADD PRIMARY KEY (`id_product`);
 
 --
--- Indexes for table `products_colors`
---
-ALTER TABLE `products_colors`
-  ADD PRIMARY KEY (`id_pc`),
-  ADD KEY `id_product` (`id_product`),
-  ADD KEY `id_color` (`id_color`);
-
---
 -- Indexes for table `products_images`
 --
 ALTER TABLE `products_images`
-  ADD PRIMARY KEY (`id_pi`),
-  ADD KEY `id_product` (`id_product`),
-  ADD KEY `id_image` (`id_image`);
-
---
--- Indexes for table `products_sizes`
---
-ALTER TABLE `products_sizes`
-  ADD PRIMARY KEY (`id_ps`),
-  ADD KEY `id_product` (`id_product`),
-  ADD KEY `id_size` (`id_size`);
+  ADD PRIMARY KEY (`id_img`),
+  ADD KEY `id_product` (`id_product`);
 
 --
 -- Indexes for table `sizes`
 --
 ALTER TABLE `sizes`
-  ADD PRIMARY KEY (`id_size`);
+  ADD PRIMARY KEY (`id_size`),
+  ADD UNIQUE KEY `name` (`name`);
 
 --
 -- Indexes for table `stocks`
@@ -212,80 +199,47 @@ ALTER TABLE `stocks`
 -- AUTO_INCREMENT for table `colors`
 --
 ALTER TABLE `colors`
-  MODIFY `id_color` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `images`
---
-ALTER TABLE `images`
-  MODIFY `id_image` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_color` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `login`
 --
 ALTER TABLE `login`
-  MODIFY `id_login` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_login` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `products_colors`
---
-ALTER TABLE `products_colors`
-  MODIFY `id_pc` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `products_images`
 --
 ALTER TABLE `products_images`
-  MODIFY `id_pi` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `products_sizes`
---
-ALTER TABLE `products_sizes`
-  MODIFY `id_ps` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_img` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `sizes`
 --
 ALTER TABLE `sizes`
-  MODIFY `id_size` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_size` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `stocks`
 --
 ALTER TABLE `stocks`
-  MODIFY `id_stock` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_stock` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
 --
 
 --
--- Constraints for table `products_colors`
---
-ALTER TABLE `products_colors`
-  ADD CONSTRAINT `products_colors_ibfk_1` FOREIGN KEY (`id_product`) REFERENCES `products` (`id_product`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `products_colors_ibfk_2` FOREIGN KEY (`id_color`) REFERENCES `colors` (`id_color`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
 -- Constraints for table `products_images`
 --
 ALTER TABLE `products_images`
-  ADD CONSTRAINT `products_images_ibfk_1` FOREIGN KEY (`id_product`) REFERENCES `products` (`id_product`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `products_images_ibfk_2` FOREIGN KEY (`id_image`) REFERENCES `images` (`id_image`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `products_sizes`
---
-ALTER TABLE `products_sizes`
-  ADD CONSTRAINT `products_sizes_ibfk_1` FOREIGN KEY (`id_product`) REFERENCES `products` (`id_product`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `products_sizes_ibfk_2` FOREIGN KEY (`id_size`) REFERENCES `sizes` (`id_size`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `products_images_ibfk_1` FOREIGN KEY (`id_product`) REFERENCES `products` (`id_product`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `stocks`

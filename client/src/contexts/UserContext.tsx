@@ -1,17 +1,36 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from './../api/axios';
+import axios from '../api/axios';
 
-export const UserContext = createContext();
+interface User {
+  id_login?: number;
+  name?: string;
+  email?: string;
+  is_admin?: boolean;
+}
 
-export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+interface UserContextType {
+  user: User | null;
+  handleLogin: (user: User) => void;
+  handleLogout: () => void;
+  loading: boolean;
+}
+
+export const UserContext = createContext<UserContextType>({
+  user: null,
+  handleLogin: () => {},
+  handleLogout: () => {},
+  loading: false,
+});
+
+export const UserProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const checkSession = async () => {
     try {
-      const response = await axios.get('/user/me');
+      const response = await axios.get('/auth/me');
 
       if (response.status === 200) {
         const data = response.data;
@@ -27,16 +46,15 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  const handleLogin = (user) => {
+  const handleLogin = (user: User) => {
     setUser(user);
     navigate('/');
   };
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post('/user/logout');
+      const response = await axios.post('/auth/logout');
       if (response.status === 200) {
-        setUser(null);
         navigate('/');
       }
     } catch (err) {

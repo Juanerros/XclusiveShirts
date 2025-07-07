@@ -14,6 +14,7 @@ class ProductController {
       const id_product = await this.service.create(name, category, price, description, stocks);
 
       res.status(200).json({
+        success: true,
         message: 'Se creó el producto correctamente',
         id_product
       });

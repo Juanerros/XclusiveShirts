@@ -29,6 +29,7 @@ class AuthController {
       });
 
       res.status(200).json({
+        success: true,
         message: 'Se logueó correctamente',
         user: { ...user, pass: '[Hidden]' }
       });
@@ -53,7 +54,23 @@ class AuthController {
       }
 
       const user = await this.service.register(req.body);
+
+      const token = generateToken({
+        id_login: user.id_login,
+        name: user.name,
+        email: user.email,
+        is_admin: user.is_admin,
+      });
+
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: true, // usar HTTPS en producción
+        sameSite: 'Strict',
+        maxAge: 1000 * 60 * 60 * 24, // 1 día
+      });
+
       res.status(201).json({
+        success: true,
         message: 'Usuario registrado correctamente',
         user: { ...user, pass: '[Hidden]' }
       });

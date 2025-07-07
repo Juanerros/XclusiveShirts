@@ -3,6 +3,23 @@ class ProductService {
         this.conex = conex
     }
 
+    async getAll() {
+        try {
+            const [rows] = await this.conex.execute(
+                "SELECT p.id_product, p.name, p.category, p.price, p.description," +
+                "c.id_color, c.name," + 
+                "s.id_size, s.stock " +
+                "FROM products p " +
+                "JOIN stocks s ON p.id_product = s.id_product"
+            );
+            return rows;
+        } catch (err) {
+            if (err.status) throw err;
+            console.error('Error interno en GetAll ProductService:', err);
+            throw { status: 500, message: 'Error interno del servidor', cause: err };
+        }
+    }
+
     //                                           Array de objetos
     async create(name, category, price, description, stocks) {
         try {

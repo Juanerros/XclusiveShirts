@@ -12,11 +12,14 @@ const Login: React.FC = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    rePassword: '',
     name: ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!isValid()) return;
 
     try {
       setLoading(true);
@@ -27,14 +30,61 @@ const Login: React.FC = () => {
         notify(response.data.message, 'success');
         handleLogin(response.data.user);
       }
-    } catch (err) {
-      const error = (err as any).response?.data || 'Error al procesar la solicitud';
-      notify(error, 'error');
+    } catch (err: any) {
+      const error = err.response?.data?.message || 'Error al procesar la solicitud';
+        
       console.error(error);
     } finally {
       setLoading(false);
     }
   }
+
+  const isValid = () => {
+    const regexEspeciales = /[^ a-zA-Z0-9!@#$%^&()_+[\]{};\\|\-/?`.~]/g;
+    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (regexEspeciales.test(formData.email) || regexEspeciales.test(formData.password)) {
+      notify('No escribas caracteres especiales', 'warning')
+      return false;
+    }
+
+    if (isLogin) return true;
+
+    if (!regexEmail.test(formData.email)) {
+      notify('El formato del email no es válido', 'error');
+      return false;
+    }
+
+    if (formData.password.length < 6) {
+      notify('La contraseña debe tener al menos 6 caracteres', 'error');
+      return false;
+    }
+
+    if (formData.password !== formData.rePassword) {
+      notify('Las contraseñas no coinciden', 'error');
+      return false;
+    }
+
+    if (formData.name.trim().length < 3) {
+      notify('El nombre debe tener al menos 3 caracteres', 'error');
+      return false;
+    }
+
+    return true;
+  }
+
+  // Por alguna razon, no funciona
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.includes('  ')) {
+      notify('No puedes escribir espacios dobles', 'warning');
+      return;
+    }
+
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
 
   if (user) {
     return (
@@ -166,6 +216,21 @@ const Login: React.FC = () => {
                 placeholder="••••••••"
               />
             </div>
+
+            {!isLogin && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Repetir contraseña
+                </label>
+                <input
+                  value={formData.rePassword}
+                  onChange={(e) => setFormData({ ...formData, rePassword: e.target.value })}
+                  type="password"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all placeholder-gray-400"
+                  placeholder="••••••••"
+                />
+              </div>
+            )}
 
             {isLogin && (
               <div className="flex items-center justify-between text-sm">

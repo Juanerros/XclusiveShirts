@@ -1,6 +1,9 @@
 // Importaciones de rutas
 import authRoutes from './routes/Auth.js';
 import productsRoutes from './routes/Products.js';
+import colorRoutes from './routes/Colors.js';
+import sizesRoutes from './routes/Sizes.js';
+
 
 // Importaciones de dependencias 
 import express from 'express';
@@ -40,6 +43,8 @@ if (!isProduction) {
 // Rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productsRoutes); 
+app.use('/api/colors', colorRoutes);
+app.use('/api/sizes', sizesRoutes);
 
 // Testeo de api
 app.get('/api/ping', async (req, res) => {

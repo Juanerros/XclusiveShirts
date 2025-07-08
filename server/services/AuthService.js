@@ -63,9 +63,9 @@ class AuthService {
     }
   }
 
-  async register({ email, pass, name, }) {
+  async register({ email, password, name, }) {
     try {
-      const hashed = await bcrypt.hash(pass, SALT_ROUNDS);
+      const hashed = await bcrypt.hash(password, SALT_ROUNDS);
 
       const [loginRes] = await this.conex.execute(
         'INSERT INTO login(email, pass, name) VALUES (?, ?, ?)',

@@ -27,7 +27,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </Link>
             </div>
             <nav className="hidden md:block">
-              <div className="flex items-center space-x-12">
+              <div className="flex items-center space-x-8">
                 <Link to="/home" className="text-gray-700 hover:text-black transition-colors font-medium">
                   Inicio
                 </Link>
@@ -44,14 +44,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <Link to="/admin" className="text-gray-700 hover:text-black transition-colors font-medium">
                     Admin
                   </Link>
-                ): null}
+                ) : null}
                 {user ? (
-                  <button
-                    onClick={handleLogout}
-                    className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors font-medium"
-                  >
-                    Cerrar Sesión
-                  </button>
+                  <div className="flex items-center space-x-2 md:ml-4">
+                    <p className='font-medium'>{user.name}</p>
+                    <button
+                      onClick={handleLogout}
+                      className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors font-medium"
+                    >
+                      Cerrar Sesión
+                    </button>
+                  </div>
                 ) : (
                   <Link to="/auth" className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors font-medium">
                     Iniciar Sesión

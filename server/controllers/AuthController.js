@@ -31,7 +31,7 @@ class AuthController {
       res.status(200).json({
         success: true,
         message: 'Se logueó correctamente',
-        user: { ...user, pass: '[Hidden]' }
+        user
       });
 
     } catch (err) {
@@ -46,10 +46,10 @@ class AuthController {
 
   register = async (req, res) => {
     try {
-      const { email, pass, name } = req.body;
+      const { email, password, name } = req.body;
       
       // Validar datos de entrada
-      if (!email || !pass || !name) {
+      if (!email || !password || !name) {
         return handleError(res, { status: 400, message: 'Email, contraseña y nombre son requeridos' });
       }
 
@@ -72,7 +72,7 @@ class AuthController {
       res.status(201).json({
         success: true,
         message: 'Usuario registrado correctamente',
-        user: { ...user, pass: '[Hidden]' }
+        user
       });
     } catch (err) {
       handleError(res, err);

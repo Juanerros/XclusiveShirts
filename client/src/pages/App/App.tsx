@@ -12,6 +12,7 @@ import Home from '../Home/Home';
 import NotFound from '../NotFound/NotFound';
 import Catalog from '../Catalog/Catalog';
 import CatalogById from '../Catalog/CatalogById';
+import Admin from '../Admin/Admin';
 
 const App: React.FC = () => {
   return (
@@ -44,7 +45,7 @@ const App: React.FC = () => {
                 <Route path="/catalog" element={
                   <Catalog />
                 } />
-                
+
                 <Route path="/product/:id" element={
                   <CatalogById />
                 } />
@@ -55,6 +56,7 @@ const App: React.FC = () => {
                     <p className="text-gray-600 mt-4">Próximamente...</p>
                   </div>
                 } />
+
                 <Route path="/contact" element={
                   <div className="p-8 text-center">
                     <h1 className="text-3xl font-bold text-gray-900">Contacto</h1>
@@ -62,6 +64,9 @@ const App: React.FC = () => {
                   </div>
                 } />
 
+                <Route path="/admin" element={
+                  <Admin />
+                } />
                 <Route path="/*" element={
                   <NotFound />
                 } />

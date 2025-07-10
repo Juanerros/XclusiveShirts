@@ -116,7 +116,11 @@ class ProductService {
 
     async update(productId, name, category, price, description, stocks) {
         try {
-            await this.getById(productId); // Verificar si el producto existe
+            const [product] = await this.conex.execute(
+                "SELECT * FROM products WHERE id_product = ?",
+                [productId]
+            );
+            if (product.length === 0) throw { status: 404, message: 'Producto no encontrado' };
 
             // Actualizar producto principal
             await this.conex.execute(
@@ -148,7 +152,11 @@ class ProductService {
 
     async delete(productId) {
         try {
-            await this.getById(productId); // Verificar si el producto existe
+            const [product] = await this.conex.execute(
+                "SELECT * FROM products WHERE id_product = ?",
+                [productId]
+            );
+            if (product.length === 0) throw { status: 404, message: 'Producto no encontrado' };
 
             // Eliminar stocks asociados
             await this.conex.execute(

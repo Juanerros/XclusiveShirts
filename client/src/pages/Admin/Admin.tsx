@@ -1,12 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import axios from '../../api/axios';
 import useNotification from '../../hooks/useNotification';
 import useConfirmation from '../../hooks/useConfirmation';
+import { UserContext } from '../../contexts/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 const Admin: React.FC = () => {
+    const { user } = useContext(UserContext);
+    const navigate = useNavigate();
+
+    if (!user?.is_admin) {
+        navigate('/');
+    }
+
     const notify = useNotification();
     const confirm = useConfirmation();
     const [products, setProducts] = useState<any[]>([]);
+    const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [form, setForm] = useState({
         name: '',
@@ -30,8 +40,36 @@ const Admin: React.FC = () => {
         }
     };
 
+    const fetchUsers = async () => {
+        setLoading(true);
+        try {
+            const res = await axios.get('/admin');
+            if (res.data.success) setUsers(res.data.users);
+        } catch (err: any) {
+            notify(err?.response?.data?.message || 'Error al obtener usuarios', 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleToggleAdmin = async (id_login: number) => {
+        try {
+            setLoading(true);
+            const res = await axios.patch(`/admin/${id_login}/toggle-admin`);
+            if (res.data.success) {
+                notify('Rol de admin actualizado', 'success');
+                fetchUsers();
+            }
+        } catch (err: any) {
+            notify(err?.response?.data?.message || 'Error al actualizar rol', 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchProducts();
+        fetchUsers();
     }, []);
 
     // Crear producto
@@ -205,6 +243,42 @@ const Admin: React.FC = () => {
                                         className="bg-red-600 text-white px-2 py-1 rounded"
                                     >
                                         Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
+
+            <h1 className="text-2xl font-bold mb-4">Administrar Usuarios</h1>
+
+            {loading ? (
+                <p>Cargando...</p>
+            ) : (
+                <table className="w-full border">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Admin</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {users.map((user) => (
+                            <tr key={user.id_login}>
+                                <td>{user.id_login}</td>
+                                <td>{user.name}</td>
+                                <td>{user.email}</td>
+                                <td>{user.is_admin ? 'Sí' : 'No'}</td>
+                                <td>
+                                    <button
+                                        onClick={() => handleToggleAdmin(user.id_login)}
+                                        className={`px-2 py-1 rounded ${user.is_admin ? 'bg-red-600 text-white' : 'bg-green-600 text-white'}`}
+                                    >
+                                        {user.is_admin ? 'Quitar Admin' : 'Hacer Admin'}
                                     </button>
                                 </td>
                             </tr>

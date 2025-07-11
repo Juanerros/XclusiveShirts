@@ -32,7 +32,7 @@ const Login: React.FC = () => {
       }
     } catch (err: any) {
       const error = err.response?.data?.message || 'Error al procesar la solicitud';
-        
+      notify(error, 'error');
       console.error(error);
     } finally {
       setLoading(false);

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-07-2025 a las 20:21:34
+-- Tiempo de generación: 11-07-2025 a las 21:10:17
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `xclusive_shirts`
+-- Base de datos: `xclusiveshirts`
 --
 
 -- --------------------------------------------------------
@@ -63,7 +63,43 @@ CREATE TABLE `login` (
 
 INSERT INTO `login` (`id_login`, `email`, `pass`, `name`, `failed_attempts`, `lock_until`, `is_admin`) VALUES
 (1, 'juancottier0@gmail.com', '$2b$15$W8ESUTGlk7b4lS0iR.w6E.rBdBmLC/6SWqG3.FEnIhRv81N5piiGe', 'Juan', 0, NULL, 1),
-(3, 'youtour.no.reply@gmail.com', '$2b$15$45F4kxn/gKIGeNfEzjfTlev..IALy8/3PGZyy/Fuj40Z5ziWOtR3q', 'Pateo Malacios', 0, NULL, 1);
+(3, 'youtour.no.reply@gmail.com', '$2b$15$45F4kxn/gKIGeNfEzjfTlev..IALy8/3PGZyy/Fuj40Z5ziWOtR3q', 'Pateo Malacios', 0, NULL, 1),
+(4, 'thiago@gmail.com', '$2b$15$QIRA6hXrMFSLzMmfwO.KLeZxhrJzzd8CDerAkAh9tK9NT.cdUwyoe', 'thiago gonzalez', 0, NULL, 0),
+(5, 'admin@admin.com', '$2b$15$chslMeGxhMynUuFWbRt7nuAu1avC0TohboCd19hu7bmk2OXN5w9/O', 'admin', 0, NULL, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `orders`
+--
+
+CREATE TABLE `orders` (
+  `id_order` int(11) NOT NULL,
+  `id_login` int(11) NOT NULL,
+  `total_amount` decimal(10,2) NOT NULL,
+  `status` enum('pendiente','confirmado','enviado','entregado','cancelado') DEFAULT 'pendiente',
+  `order_date` datetime DEFAULT current_timestamp(),
+  `delivery_address` text DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `notes` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `order_items`
+--
+
+CREATE TABLE `order_items` (
+  `id_order_item` int(11) NOT NULL,
+  `id_order` int(11) NOT NULL,
+  `id_product` int(11) NOT NULL,
+  `id_color` int(11) NOT NULL,
+  `id_size` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `unit_price` decimal(10,2) NOT NULL,
+  `subtotal` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -164,6 +200,23 @@ ALTER TABLE `login`
   ADD UNIQUE KEY `email` (`email`);
 
 --
+-- Indices de la tabla `orders`
+--
+ALTER TABLE `orders`
+  ADD PRIMARY KEY (`id_order`),
+  ADD KEY `id_login` (`id_login`);
+
+--
+-- Indices de la tabla `order_items`
+--
+ALTER TABLE `order_items`
+  ADD PRIMARY KEY (`id_order_item`),
+  ADD KEY `id_order` (`id_order`),
+  ADD KEY `id_product` (`id_product`),
+  ADD KEY `id_color` (`id_color`),
+  ADD KEY `id_size` (`id_size`);
+
+--
 -- Indices de la tabla `products`
 --
 ALTER TABLE `products`
@@ -206,7 +259,19 @@ ALTER TABLE `colors`
 -- AUTO_INCREMENT de la tabla `login`
 --
 ALTER TABLE `login`
-  MODIFY `id_login` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_login` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de la tabla `orders`
+--
+ALTER TABLE `orders`
+  MODIFY `id_order` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `order_items`
+--
+ALTER TABLE `order_items`
+  MODIFY `id_order_item` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `products`
@@ -235,6 +300,21 @@ ALTER TABLE `stocks`
 --
 -- Restricciones para tablas volcadas
 --
+
+--
+-- Filtros para la tabla `orders`
+--
+ALTER TABLE `orders`
+  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`id_login`) REFERENCES `login` (`id_login`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `order_items`
+--
+ALTER TABLE `order_items`
+  ADD CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`id_order`) REFERENCES `orders` (`id_order`) ON DELETE CASCADE,
+  ADD CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`id_product`) REFERENCES `products` (`id_product`) ON DELETE CASCADE,
+  ADD CONSTRAINT `order_items_ibfk_3` FOREIGN KEY (`id_color`) REFERENCES `colors` (`id_color`) ON DELETE CASCADE,
+  ADD CONSTRAINT `order_items_ibfk_4` FOREIGN KEY (`id_size`) REFERENCES `sizes` (`id_size`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `products_images`

@@ -4,6 +4,8 @@ import productsRoutes from './routes/Products.js';
 import colorRoutes from './routes/Colors.js';
 import sizesRoutes from './routes/Sizes.js';
 import userAdminRoutes from './routes/UserAdmin.js';
+import stockRoutes from './routes/Stock.js';
+import orderRoutes from './routes/Orders.js';
 
 // Importaciones de dependencias 
 import express from 'express';
@@ -46,6 +48,8 @@ app.use('/api/products', productsRoutes);
 app.use('/api/colors', colorRoutes);
 app.use('/api/sizes', sizesRoutes);
 app.use('/api/admin', userAdminRoutes);
+app.use('/api/stock', stockRoutes);
+app.use('/api/orders', orderRoutes);
 
 // Testeo de api
 app.get('/api/ping', async (req, res) => {

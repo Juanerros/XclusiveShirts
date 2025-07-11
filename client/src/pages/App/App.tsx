@@ -13,6 +13,8 @@ import NotFound from '../NotFound/NotFound';
 import Catalog from '../Catalog/Catalog';
 import CatalogById from '../Catalog/CatalogById';
 import Admin from '../Admin/Admin';
+import Cart from '../Cart/Cart';
+import Orders from '../Orders/Orders';
 
 const App: React.FC = () => {
   return (
@@ -51,10 +53,11 @@ const App: React.FC = () => {
                 } />
 
                 <Route path="/cart" element={
-                  <div className="p-8 text-center">
-                    <h1 className="text-3xl font-bold text-gray-900">Carrito</h1>
-                    <p className="text-gray-600 mt-4">Próximamente...</p>
-                  </div>
+                  <Cart />
+                } />
+
+                <Route path="/orders" element={
+                  <Orders />
                 } />
 
                 <Route path="/contact" element={

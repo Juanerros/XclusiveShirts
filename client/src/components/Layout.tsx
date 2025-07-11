@@ -1,6 +1,8 @@
 import React, { useContext, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { UserContext } from '../contexts/UserContext';
+import { useCart } from '../hooks/useCart';
+import UserProfileDropdown from './UserProfileDropdown';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -8,6 +10,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, handleLogout } = useContext(UserContext);
+  const { cartItemCount } = useCart();
   const location = useLocation();
 
   useEffect(() => {
@@ -34,8 +37,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <Link to="/catalog" className="text-gray-700 hover:text-black transition-colors font-medium">
                   Catálogo
                 </Link>
-                <Link to="/cart" className="text-gray-700 hover:text-black transition-colors font-medium">
+                <Link to="/cart" className="text-gray-700 hover:text-black transition-colors font-medium relative">
                   Carrito
+                  {cartItemCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {cartItemCount}
+                    </span>
+                  )}
                 </Link>
                 <Link to="/contact" className="text-gray-700 hover:text-black transition-colors font-medium">
                   Contacto
@@ -46,15 +54,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   </Link>
                 ) : null}
                 {user ? (
-                  <div className="flex items-center space-x-2 md:ml-4">
-                    <p className='font-medium'>{user.name}</p>
-                    <button
-                      onClick={handleLogout}
-                      className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors font-medium"
-                    >
-                      Cerrar Sesión
-                    </button>
-                  </div>
+                  <UserProfileDropdown user={user} onLogout={handleLogout} />
                 ) : (
                   <Link to="/auth" className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors font-medium">
                     Iniciar Sesión

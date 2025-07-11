@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, type ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from '../api/axios';
 
 interface User {
@@ -27,6 +27,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const checkSession = async () => {
     try {
@@ -48,7 +49,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const handleLogin = (user: User) => {
     setUser(user);
-    navigate('/');
+    // Solo navegar si estamos en la página de auth, de lo contrario mantener la ubicación actual
+    if (location.pathname === '/auth') {
+      navigate('/');
+    }
   };
 
   const handleLogout = async () => {
